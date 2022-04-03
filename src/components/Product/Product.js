@@ -1,12 +1,17 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import StartRatings from 'react-star-ratings'
 
 const Product = ({product,handleAddToCart}) => {
-    const{title,price,image,category,rating}=product
-    //console.log(product)
+    const{id,title,price,image,category,rating}=product
+    const navigate=useNavigate()
+    const showDetails=(id)=>{
+        navigate('/product/'+id)
+
+    }
     return (
         <div className='col bg-pink-300 rounded-lg p-2 border-solid border-2 border-gray-300'>
-            <div className="p-img flex justify-center ">
+            <div className="p-img flex justify-center cursor-pointer "  onClick={()=>showDetails(id)}>
                 <img src={image} alt="" className='h-[200px] rounded-lg' />
             </div>
             <div className="body py-1">

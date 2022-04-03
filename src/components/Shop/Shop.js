@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { createContext, useState } from 'react';
 import useCart from '../../hooks/useCart/useCart';
 import useProducts from '../../hooks/useProducts/useProducts';
 import Cart from '../Cart/Cart';
@@ -6,6 +6,8 @@ import Product from '../Product/Product';
 import Spinner from '../Spinner/Spinner';
 import { addToCart } from '../utilities/productDb';
 import CustomModal from '../CustomModal/CustomModal';
+
+export const ProductContext=createContext('product-context')
 
 const Shop = () => {
     const [products,setProducts,isLoading]=useProducts()
@@ -33,31 +35,34 @@ const Shop = () => {
     }
     console.log('cart',cart.length)
     return (
-        <div className='w-5/6 mx-auto md:flex'>
-            <div className='lg:w-8/12 md:w-8/12 sm:w-full w-full mt-3'>
-                <div>
+        <ProductContext.Provider value={[handleAddToCart,products]}>
+            <div className='w-5/6 mx-auto md:flex'>
+                <div className='lg:w-8/12 md:w-8/12 sm:w-full w-full mt-3'>
+                    <div>
+                        {
+                            <CustomModal modalIsOpen={modalIsOpen} closeModal={closeModal}/>
+                        }
+                    </div>
+                    <div>
                     {
-                        <CustomModal modalIsOpen={modalIsOpen} closeModal={closeModal}/>
+                        isLoading||<Spinner/>
                     }
-                </div>
-                <div>
-                {
-                    isLoading||<Spinner/>
-                }
-                </div>
-                <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 grid-cols-1 gap-3">
-                    {
-                        isLoading&&products?.map(product=><Product key={product.id} product={product} handleAddToCart={handleAddToCart}/>)
-                    }
+                    </div>
+                    <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 grid-cols-1 gap-3">
+                        {
+                            isLoading&&products?.map(product=><Product key={product.id} product={product} handleAddToCart={handleAddToCart}/>)
+                        }
 
+                    </div>
+                </div>
+                <div className='lg:w-4/12 md:w-4/12 sm:w-full w-full mt-3'>
+                    <Cart cart={cart}>
+                        Go to Order
+                    </Cart>
                 </div>
             </div>
-            <div className='lg:w-4/12 md:w-4/12 sm:w-full w-full mt-3'>
-                <Cart cart={cart}>
-                    Go to Order
-                </Cart>
-            </div>
-        </div>
+        </ProductContext.Provider>
+
     );
 };
 
